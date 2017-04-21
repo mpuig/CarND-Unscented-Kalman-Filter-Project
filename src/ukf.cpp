@@ -127,7 +127,7 @@ void UKF::Prediction(double delta_t) {
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
   CreateAugmentedSigmaPointsMatrix();
-  PredictAugmentedSigmaPointsMatrix();
+  PredictAugmentedSigmaPointsMatrix(delta_t);
   PredictMeanAndCovariance();
 }
 
@@ -156,8 +156,41 @@ void UKF::CreateAugmentedSigmaPointsMatrix() {
 
 }
 
-void UKF::PredictAugmentedSigmaPointsMatrix() {
+void UKF::PredictAugmentedSigmaPointsMatrix(double delta_t) {
 
+  double p_x=0, p_y=0, v=0, yaw=0, yawd=0, nu_a=0, nu_yawdd=0;
+
+  for (int i = 0; i < n_sigma_points_; i++) {
+    //extract values for better readability
+    p_x = Xsig_aug_(0, i);
+    p_y = Xsig_aug_(1, i);
+    v = Xsig_aug_(2, i);
+    yaw = Xsig_aug_(3, i);
+    yawd = Xsig_aug_(4, i);
+    nu_a = Xsig_aug_(5, i);
+    nu_yawdd = Xsig_aug_(6, i);
+
+    //predicted state values
+    double px_p, py_p;
+
+    //avoid division by zero
+    if (fabs(yawd) > 0.001) {
+        px_p = p_x + v/yawd * (sin(yaw + yawd * delta_t) - sin(yaw));
+        py_p = p_y + v/yawd * (cos(yaw) - cos(yaw + yawd * delta_t));
+    }
+    else {
+        px_p = p_x + v * delta_t * cos(yaw);
+        py_p = p_y + v * delta_t * sin(yaw);
+    }
+
+    //add noise and write predicted sigma point into right column
+    Xsig_pred_(0, i) = px_p + 0.5 * nu_a * delta_t * delta_t * cos(yaw);  // px_p
+    Xsig_pred_(1, i) = py_p + 0.5 * nu_a * delta_t * delta_t * sin(yaw);  // py_p
+    Xsig_pred_(2, i) = v + nu_a * delta_t; // v_p
+    Xsig_pred_(3, i) = yaw + yawd*delta_t + 0.5 * nu_yawdd * delta_t * delta_t;  // yaw_p
+    Xsig_pred_(4, i) = yawd + nu_yawdd*delta_t;  // yawd_p
+
+  }
 }
 
 void UKF::PredictMeanAndCovariance() {

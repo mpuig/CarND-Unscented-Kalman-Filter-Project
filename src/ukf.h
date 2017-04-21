@@ -126,7 +126,7 @@ private:
   /**
    * Predicts the sigma points.
    */
-  void PredictAugmentedSigmaPointsMatrix();
+  void PredictAugmentedSigmaPointsMatrix(double delta_t);
 
   /**
    * Predicts the state, and the state covariance matrix.
