@@ -13,8 +13,6 @@ using std::vector;
  */
 UKF::UKF() {
 
-  is_initialized_ = false;
-
   // if this is false, laser measurements will be ignored (except during init)
   use_laser_ = true;
 
@@ -55,6 +53,21 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
+  is_initialized_ = false;
+
+  // state dimensions
+  n_x_ = 5;
+  n_aug_ = 7;
+
+  // Number of sigma points
+  n_sigma_points_ = 2 * n_aug_ + 1;
+
+  lambda_ = 3 - n_aug_;
+
+  // Augmented sigma points initialization
+  Xsig_aug_ = MatrixXd(n_aug_, n_sigma_points_);
+  Xsig_aug_.fill(0.0);
+
 }
 
 UKF::~UKF() {}
@@ -113,6 +126,42 @@ void UKF::Prediction(double delta_t) {
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
+  CreateAugmentedSigmaPointsMatrix();
+  PredictAugmentedSigmaPointsMatrix();
+  PredictMeanAndCovariance();
+}
+
+void UKF::CreateAugmentedSigmaPointsMatrix() {
+  // create augmented mean vector
+  VectorXd x_aug = VectorXd(n_aug_);
+  x_aug.fill(0.0);
+  x_aug.head(n_x_) = x_;
+
+  // create augmented covariance matrix
+  MatrixXd P_aug = MatrixXd(n_aug_, n_aug_);
+  P_aug.fill(0.0);
+  P_aug.topLeftCorner(n_x_, n_x_) = P_;
+  P_aug(5, 5) = std_a_ * std_a_;
+  P_aug(6, 6) = std_yawdd_ * std_yawdd_;
+
+  // create square root matrix
+  MatrixXd L = P_aug.llt().matrixL();
+
+  // create augmented sigma points
+  Xsig_aug_.col(0) = x_aug;
+  for (int i = 0; i < n_aug_; i++) {
+    Xsig_aug_.col(i + 1) = x_aug + sqrt(lambda_ + n_aug_) * L.col(i);
+    Xsig_aug_.col(i + 1 + n_aug_) = x_aug - sqrt(lambda_ + n_aug_) * L.col(i);
+  }
+
+}
+
+void UKF::PredictAugmentedSigmaPointsMatrix() {
+
+}
+
+void UKF::PredictMeanAndCovariance() {
+
 }
 
 /**

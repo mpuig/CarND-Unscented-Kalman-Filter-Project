@@ -110,6 +110,28 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+private:
+  ///* Number of sigma points
+  int n_sigma_points_;
+
+  ///* Augmented sigma points matrix
+  MatrixXd Xsig_aug_;
+
+  /**
+   * Create the augmented sigma points matrix.
+   */
+  void CreateAugmentedSigmaPointsMatrix();
+
+  /**
+   * Predicts the sigma points.
+   */
+  void PredictAugmentedSigmaPointsMatrix();
+
+  /**
+   * Predicts the state, and the state covariance matrix.
+   */
+  void PredictMeanAndCovariance();
 };
 
 #endif /* UKF_H */
