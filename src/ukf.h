@@ -31,9 +31,6 @@ public:
   ///* state covariance matrix
   MatrixXd P_;
 
-  ///* predicted sigma points matrix
-  MatrixXd Xsig_pred_;
-
   ///* time when the state is true, in us
   long long time_us_;
 
@@ -115,8 +112,26 @@ private:
   ///* Number of sigma points
   int n_sigma_points_;
 
+  ///* Radar measurement dimension
+  int n_z_radar_;
+
+  ///* Lidar measurement dimension
+  int n_z_laser_;
+
+  ///* Predicted sigma points matrix
+  MatrixXd Xsig_pred_;
+
   ///* Augmented sigma points matrix
   MatrixXd Xsig_aug_;
+
+  ///* Measurement matrix for laser
+  MatrixXd H_;
+
+  ///* Measurement noise laser
+  MatrixXd R_laser_;
+
+  ///* Measurement noise radar
+  MatrixXd R_radar_;
 
   /**
    * Create the augmented sigma points matrix.
@@ -132,6 +147,10 @@ private:
    * Predicts the state, and the state covariance matrix.
    */
   void PredictMeanAndCovariance();
+
+  void PredictRadarMeasurement(MatrixXd *Zsig_pred, VectorXd *z_pred, MatrixXd *S);
+  void UpdateStateFromRadar(VectorXd raw_measurements, MatrixXd Zsig_pred,
+                     VectorXd z_pred, MatrixXd S);
 };
 
 #endif /* UKF_H */
