@@ -321,5 +321,5 @@ void UKF::UpdateStateFromRadar(VectorXd raw_measurements, MatrixXd Zsig_pred, Ve
   tools.AngleNormalization(z_diff(1));
   // update state mean and covariance matrix
   x_ += K * z_diff;
-  P_ += K * S * K.transpose();
+  P_ -= K * S * K.transpose();
 }
