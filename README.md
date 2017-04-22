@@ -18,29 +18,56 @@ Self-Driving Car Engineer Nanodegree Program
    some sample inputs in 'data/'.
     - eg. `./UnscentedKF ../data/obj_pose-laser-radar-synthetic-input.txt ../data/output.txt`
 
-## Editor Settings
+## Running modes:
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+It's possible to run the project in three different modes:
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+  1. LIDAR and RADAR combined
+  2. LIDAR alone
+  3. RADAR alone
 
-## Code Style
+To change the mode, `use_laser_` and `use_radar_` variables can be defined as `true` or `false`.
 
-Please stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html) as much as possible.
+## Tuning Process Noise
+The values for the process noise `std_a_` and `std_yawdd_` were both initially set to 30. Once all the methods where implemented, a few experiments were executed to adjust its values in order to get the Kalman filter working
+The final values are:
 
-## Generating Additional Data
+```
+  std_a = 0.9
+  std_yawdd = 0.4
+```
 
-This is optional!
+## RMSE
 
-If you'd like to generate your own radar and lidar data, see the
-[utilities repo](https://github.com/udacity/CarND-Mercedes-SF-Utilities) for
-Matlab scripts that can generate additional data.
+Once good values were found, and using the file "obj_pose-laser-radar-synthetic-input.txt" as input, the project was executed with `use_laser_ = false' to generate the file 'data/output-no-laser.txt' and with `use_radar_ = false' to generate the file 'data/output-no-radar.txt'.
 
-## Project Instructions and Rubric
+The RMSE obtained running with laser and radar was:
 
-This information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/c3eb3583-17b2-4d83-abf7-d852ae1b9fff/concepts/f437b8b0-f2d8-43b0-9662-72ac4e4029c1)
-for instructions and the project rubric.
+```
+ 0.0664948
+ 0.0827918
+ 0.333513
+ 0.217135
+```
+
+The RMSE obtained running only with laser was:
+
+```
+ 0.0958565
+ 0.0921837
+ 0.605361
+ 0.234694
+```
+
+The RMSE obtained running only with radar was:
+
+```
+ 0.148082
+ 0.195942
+ 0.277767
+ 0.311838
+```
+
+## Results visualization
+
+A Jupyter notebook has been used to visualize the obtained results: [UKF Visualization](UKF+Visualization.html)
