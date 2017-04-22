@@ -160,10 +160,11 @@ int main(int argc, char* argv[]) {
 
   for (size_t k = 0; k < number_of_measurements; ++k) {
 
-    if (ukf.use_laser_ || ukf.use_radar_) {
+    // Call the UKF-based fusion
+    ukf.ProcessMeasurement(measurement_pack_list[k]);
+    if ((ukf.use_laser_ && measurement_pack_list[k].sensor_type_ == MeasurementPackage::LASER) ||
+      (ukf.use_radar_ && measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR)) {
 
-      // Call the UKF-based fusion
-      ukf.ProcessMeasurement(measurement_pack_list[k]);
       // timestamp
       out_file_ << measurement_pack_list[k].timestamp_ << "\t"; // pos1 - est
 
