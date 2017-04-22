@@ -14,6 +14,12 @@ using Eigen::VectorXd;
 class UKF {
 public:
 
+  ///* if this is false, radar measurements will be ignored (except for init)
+  bool use_radar_;
+
+  ///* if this is false, laser measurements will be ignored (except for init)
+  bool use_laser_;
+
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
 
@@ -44,12 +50,6 @@ private:
   bool is_initialized_;
 
   long previous_timestamp_;
-
-  ///* if this is false, laser measurements will be ignored (except for init)
-  bool use_laser_;
-
-  ///* if this is false, radar measurements will be ignored (except for init)
-  bool use_radar_;
 
   ///* state covariance matrix
   MatrixXd P_;
@@ -133,6 +133,16 @@ private:
   MatrixXd CreateAugmentedSigmaPointsMatrix();
 
   /**
+   * Create the predicted sigma points matrix.
+   */
+  MatrixXd CreatePredictedSigmaPointsMatrix();
+
+  /**
+   * Create the mean predicted measurement.
+   */
+  VectorXd CreateMeanPredictedMeasurements(MatrixXd Zsig_pred);
+
+  /**
    * Predicts the sigma points.
    * @param delta_t Time between k and k+1 in s
    */
@@ -146,7 +156,12 @@ private:
   /**
    * Predicts the Radar measurements
    */
-  void PredictRadarMeasurement(MatrixXd *Zsig_pred, VectorXd *z_pred, MatrixXd *S);
+  MatrixXd PredictRadarMeasurement(MatrixXd Zsig_pred, VectorXd z_pred);
+
+  /**
+   * Updates the State from Lidar measurements
+   */
+  void UpdateStateFromLidar(MatrixXd S, VectorXd y);
 
   /**
    * Updates the State from Radar measurements
