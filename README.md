@@ -1,4 +1,4 @@
-# Unscented Kalman Filter Project Starter Code
+# Unscented Kalman Filter Project
 Self-Driving Car Engineer Nanodegree Program
 
 ---
@@ -70,4 +70,4 @@ The RMSE obtained running only with radar was:
 
 ## Results visualization
 
-A Jupyter notebook has been used to visualize the obtained results: [UKF Visualization](UKF+Visualization.html)
+A Jupyter notebook has been used to visualize the obtained results: [UKF Visualization](UKF%20Visualization.ipynb)
